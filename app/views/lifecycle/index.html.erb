@@ -1,0 +1,8 @@
+<% content_for :packs, "lifecycle-demo-bundle" %>
+
+<%= react_component("LifecycleDemo", props: {
+  has_subscription: @subscription.present?,
+  subscription_status: @subscription&.status,
+  quarterly_price_id: ENV["STRIPE_QUARTERLY_PRICE_ID"],
+  annual_price_id: ENV["STRIPE_ANNUAL_PRICE_ID"]
+}, prerender: false) %>
