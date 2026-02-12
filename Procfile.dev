@@ -1,0 +1,7 @@
+# Procfile for development
+# Run with: bin/dev (or: overmind start -f Procfile.dev)
+rails: bundle exec rails s -p 3000
+wp-client: bin/shakapacker-dev-server
+wp-server: SERVER_BUNDLE_ONLY=yes bin/shakapacker --watch
+# For Stripe webhooks in development, run in a separate terminal:
+# stripe listen --forward-to localhost:3000/pay/webhooks/stripe
