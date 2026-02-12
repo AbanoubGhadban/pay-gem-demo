@@ -9,7 +9,8 @@ module Api
         charges: formatted_charges,
         payment_methods: formatted_payment_methods,
         webhooks: formatted_webhooks,
-        webhook_logs: formatted_webhook_logs
+        webhook_logs: formatted_webhook_logs,
+        licenses: formatted_licenses
       }
     end
 
@@ -21,6 +22,7 @@ module Api
              when "payment_methods" then formatted_payment_methods
              when "webhooks" then formatted_webhooks
              when "webhook_logs" then formatted_webhook_logs
+             when "licenses" then formatted_licenses
              else
                return render json: { error: "Unknown table: #{params[:table]}" }, status: :not_found
              end
@@ -133,6 +135,25 @@ module Api
           db_snapshot_after: wl.db_snapshot_after,
           changes_summary: wl.changes_summary,
           created_at: wl.created_at
+        }
+      end
+    end
+
+    def formatted_licenses
+      License.all.includes(:user, :pay_subscription, :pay_charge).map do |l|
+        {
+          id: l.id,
+          user_id: l.user_id,
+          license_id: l.license_id,
+          key: l.key,
+          plan: l.plan,
+          status: l.status,
+          issued_at: l.issued_at,
+          expires_at: l.expires_at,
+          pay_subscription_id: l.pay_subscription_id,
+          pay_charge_id: l.pay_charge_id,
+          created_at: l.created_at,
+          updated_at: l.updated_at
         }
       end
     end

@@ -10,9 +10,29 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_02_11_132734) do
+ActiveRecord::Schema[7.2].define(version: 2026_02_12_083919) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "licenses", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "license_id", null: false
+    t.string "key", null: false
+    t.string "plan", null: false
+    t.string "status", default: "active", null: false
+    t.datetime "issued_at", null: false
+    t.datetime "expires_at", null: false
+    t.bigint "pay_subscription_id"
+    t.bigint "pay_charge_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["expires_at"], name: "index_licenses_on_expires_at"
+    t.index ["license_id"], name: "index_licenses_on_license_id", unique: true
+    t.index ["pay_charge_id"], name: "index_licenses_on_pay_charge_id", unique: true
+    t.index ["pay_subscription_id"], name: "index_licenses_on_pay_subscription_id"
+    t.index ["user_id", "status"], name: "index_licenses_on_user_id_and_status"
+    t.index ["user_id"], name: "index_licenses_on_user_id"
+  end
 
   create_table "pay_charges", force: :cascade do |t|
     t.bigint "customer_id", null: false
@@ -130,6 +150,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_11_132734) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "licenses", "pay_charges", on_delete: :nullify
+  add_foreign_key "licenses", "pay_subscriptions", on_delete: :nullify
+  add_foreign_key "licenses", "users"
   add_foreign_key "pay_charges", "pay_customers", column: "customer_id"
   add_foreign_key "pay_charges", "pay_subscriptions", column: "subscription_id"
   add_foreign_key "pay_payment_methods", "pay_customers", column: "customer_id"

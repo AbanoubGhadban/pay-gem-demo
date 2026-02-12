@@ -4,5 +4,6 @@ class AccountController < ApplicationController
     @payment_processor = @user.payment_processor
     @subscription = @payment_processor&.subscription
     @charges = @payment_processor&.charges&.order(created_at: :desc) || []
+    @license = @user.current_license
   end
 end

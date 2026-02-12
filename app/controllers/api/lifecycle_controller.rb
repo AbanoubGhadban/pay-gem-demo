@@ -111,6 +111,9 @@ module Api
     def snapshot_state(processor, subscription)
       return {} unless processor
 
+      user = processor.owner
+      license = user.current_license
+
       {
         customer: {
           processor_id: processor.processor_id,
@@ -128,8 +131,16 @@ module Api
           on_trial: subscription.on_trial?,
           on_grace_period: subscription.on_grace_period?
         } : nil,
+        license: license ? {
+          id: license.id,
+          license_id: license.license_id,
+          plan: license.plan,
+          status: license.status,
+          expires_at: license.expires_at
+        } : nil,
         charges_count: processor.charges.count,
-        payment_methods_count: processor.payment_methods.count
+        payment_methods_count: processor.payment_methods.count,
+        licenses_count: user.licenses.count
       }
     end
   end

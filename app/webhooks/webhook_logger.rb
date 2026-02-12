@@ -9,7 +9,8 @@ class WebhookLogger
       pay_subscriptions: Pay::Subscription.joins(:customer).where(pay_customers: { owner: user }).as_json,
       pay_charges: Pay::Charge.joins(:customer).where(pay_customers: { owner: user }).as_json,
       pay_payment_methods: Pay::PaymentMethod.joins(:customer).where(pay_customers: { owner: user }).as_json,
-      pay_webhooks: Pay::Webhook.order(created_at: :desc).limit(10).as_json
+      pay_webhooks: Pay::Webhook.order(created_at: :desc).limit(10).as_json,
+      licenses: user.licenses.as_json
     }
   end
 

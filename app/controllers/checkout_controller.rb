@@ -21,6 +21,15 @@ class CheckoutController < ApplicationController
       # Sync the checkout session to create local Pay records immediately
       # (webhooks will also arrive, but this ensures immediate data availability)
       Pay::Stripe.sync_checkout_session(params[:session_id])
+
+      # Generate license synchronously on redirect so the user sees it immediately.
+      # The webhook handler will also fire async, but the job's idempotency checks
+      # ensure only one license is ever created per charge.
+      pay_subscription = current_user.payment_processor.subscription
+      if pay_subscription && !current_user.licenses.exists?(pay_subscription_id: pay_subscription.id)
+        pay_charge = pay_subscription.charges.order(created_at: :desc).first
+        GeneratePaidLicenseJob.perform_now(current_user.id, pay_subscription.id, pay_charge.id) if pay_charge
+      end
     end
 
     redirect_to account_path, notice: "Subscription activated! Check the Explorer to see what happened in the database."
