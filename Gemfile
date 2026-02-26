@@ -12,7 +12,7 @@ gem "pay", "~> 11.0"
 gem "stripe", "~> 18.0"
 
 # React on Rails + Shakapacker
-gem "react_on_rails", "~> 15.0"
+gem "react_on_rails", "~> 16.3"
 gem "shakapacker", "~> 8.0"
 
 # Environment variables
